@@ -1,14 +1,14 @@
-import pytz
-from typing import Union
 from datetime import datetime as dt
-from diffcalc import PART_DIFF_CALC
+from typing import List, Union
 
+import pytz
+
+from calcs import DitiCalcs
+from diti_op import DitiOp, diti_ops
+from timezones import DitiTimezone
 from util import (
-    PART_DELTA,
-    PART_FORMAT,
-    FormatEnum,
-    PartEnum,
-    offset_str_to_minutes,
+    DitiPart,
+    DitiRound,
     parse_date_time,
     parse_timezone,
     timezone_to_offset_str,
@@ -60,31 +60,29 @@ class Diti:
             self._mdt = MutableDatetime(parse_date_time(date_time))
 
             if self._mdt.tzinfo == None:
-                timezoned_str = self._mdt.to_dt().strftime(
-                    FormatEnum.FMT_MIL.value
-                ) + timezone_to_offset_str(self._tz)
+                timezoned_str = self._mdt.to_dt().isoformat() + timezone_to_offset_str(self._tz)
                 self._mdt = MutableDatetime(
-                    dt.strptime(timezoned_str, FormatEnum.FMT_MIL_TZ.value)
+                    dt.fromisoformat(timezoned_str)
                 )
 
             if timezone != None:
                 self._mdt = MutableDatetime(self._mdt.to_dt().astimezone(self._tz))
 
     def __str__(self) -> str:
-        return self._mdt.to_dt().strftime(FormatEnum.FMT_MIL_TZ.value)
+        return self._mdt.to_dt().isoformat()
 
-    def get(self, part: PartEnum) -> int:
-        fmt = PART_FORMAT[part]
-        part_str = self._mdt.to_dt().strftime(fmt)
-        if part == PartEnum.TZO:
-            return offset_str_to_minutes(part_str)
-        return int(part_str)
+    def get(self, part: DitiPart) -> int:
+        return DitiCalcs.get(self._mdt.to_dt(), part)
 
     def clone(self) -> "Diti":
         return Diti(self.__str__())
 
     def edit(self) -> "DitiEdit":
         return DitiEdit(self._mdt, self._tz)
+
+    def edit_ops(self, ops: List[DitiOp]) -> None:
+        new_dt = diti_ops(self._mdt.to_dt(), ops)
+        self._mdt.update(new_dt)
 
     def to_dt(self) -> dt:
         return self._mdt.to_dt()
@@ -101,28 +99,33 @@ class DitiEdit(Diti):
         super().__init__(date_time, timezone)
         self.__tempdt = self._mdt.to_dt()
 
-    def head_of(self, part: PartEnum) -> "DitiEdit":
-        diff_calculator = PART_DIFF_CALC[part]
-        diff = diff_calculator.diff_to_head(self.__tempdt)
-        self.add(PartEnum.MICROSECOND, -diff)
+    def head_of(self, part: DitiPart) -> "DitiEdit":
+        self.__tempdt = DitiCalcs.head_of(self.__tempdt, part)
         return self
 
-    def tail_of(self, part: PartEnum) -> "DitiEdit":
-        diff_calculator = PART_DIFF_CALC[part]
-        diff = diff_calculator.diff_to_tail(self.__tempdt)
-        self.add(PartEnum.MICROSECOND, diff)
+    def tail_of(self, part: DitiPart) -> "DitiEdit":
+        self.__tempdt = DitiCalcs.tail_of(self.__tempdt, part)
         return self
 
-    def set(self, part: PartEnum, value: int) -> "DitiEdit":
-        current = self.get(part)
-        diff = value - current
-        self.add(diff, part)
+    def update(self, part: DitiPart, value: int) -> "DitiEdit":
+        self.__tempdt = DitiCalcs.update(self.__tempdt, part, value)
         return self
 
-    def add(self, part: PartEnum, amount: int) -> "DitiEdit":
-        self.__tempdt += PART_DELTA[part](amount)
+    def add(self, part: DitiPart, amount: int) -> "DitiEdit":
+        self.__tempdt = DitiCalcs.add(self.__tempdt, part, amount)
         return self
+
+    def align_to(self, part: DitiPart, reference: int, rounding_mode: DitiRound):
+        self.__tempdt = DitiCalcs.align_to(
+            self.__tempdt, part, reference, rounding_mode
+        )
+        return self
+
+    def timezone_change(self, timezone: DitiTimezone):
+        self.__tempdt = DitiCalcs.timezone_change(self.__tempdt, timezone)
+
+    def timezone_update(self, timezone: DitiTimezone):
+        self.__tempdt = DitiCalcs.timezone_update(self.__tempdt, timezone)
 
     def commit(self):
         self._mdt.update(self.__tempdt)
-

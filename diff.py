@@ -1,9 +1,9 @@
 from datetime import datetime as dt
 from typing import Dict
 
-from util import PartEnum, get_daycount_of_month
+from util import DitiPart, get_daycount_of_month
 
-class DiffCalculator:
+class DitiDiff:
     def diff_to_head(self, val: dt) -> int:
         raise NotImplementedError()
 
@@ -25,7 +25,7 @@ class DiffCalculator:
     def capture_part(_, datetime: dt) -> int:
         raise NotImplementedError()
 
-class _DiffCalc(DiffCalculator):
+class _DiffCalc(DitiDiff):
     def diff_to_head(self, val: dt) -> int:
         diff = self.get_lower_part().diff_to_head(val)
         lower = self.get_lower_part()
@@ -107,7 +107,7 @@ class _DiffCalcSecond(_DiffCalc):
         return 59
 
     def get_lower_part(_) -> _DiffCalc:
-        return PART_DIFF_CALC[PartEnum.MICROSECOND]
+        return PART_DIFF_CALC[DitiPart.MICROSECONDS]
 
     def get_microsecond_multiplier(_) -> int:
         return 1_000_000
@@ -124,7 +124,7 @@ class _DiffCalcMinute(_DiffCalc):
         return 59
 
     def get_lower_part(_) -> _DiffCalc:
-        return PART_DIFF_CALC[PartEnum.SECOND]
+        return PART_DIFF_CALC[DitiPart.SECONDS]
 
     def get_microsecond_multiplier(_) -> int:
         return 1_000_000 * 60
@@ -141,7 +141,7 @@ class _DiffCalcHour(_DiffCalc):
         return 23
 
     def get_lower_part(_) -> _DiffCalc:
-        return PART_DIFF_CALC[PartEnum.MINUTE]
+        return PART_DIFF_CALC[DitiPart.MINUTES]
 
     def get_microsecond_multiplier(_) -> int:
         return 1_000_000 * 60 * 60
@@ -158,7 +158,7 @@ class _DiffCalcDay(_DiffCalc):
         return 31
 
     def get_lower_part(_) -> _DiffCalc:
-        return PART_DIFF_CALC[PartEnum.HOUR]
+        return PART_DIFF_CALC[DitiPart.HOURS]
 
     def get_microsecond_multiplier(_) -> int:
         return 1_000_000 * 60 * 60 * 24
@@ -175,7 +175,7 @@ class _DiffCalcWeek(_DiffCalc):
         return 52
 
     def get_lower_part(_) -> _DiffCalc:
-        return PART_DIFF_CALC[PartEnum.DAY]
+        return PART_DIFF_CALC[DitiPart.DAYS]
 
     def get_microsecond_multiplier(_) -> int:
         return 1_000_000 * 60 * 60 * 24 * 7
@@ -206,7 +206,7 @@ class _DiffCalcMonth(_DiffCalc):
         return 12
 
     def get_lower_part(_) -> _DiffCalc:
-        return PART_DIFF_CALC[PartEnum.DAY]
+        return PART_DIFF_CALC[DitiPart.DAYS]
 
     def capture_part(_, datetime: dt) -> int:
         return datetime.month
@@ -228,7 +228,7 @@ class _DiffCalcYear(_DiffCalc):
         return 9999
 
     def get_lower_part(_) -> _DiffCalc:
-        return PART_DIFF_CALC[PartEnum.MONTH]
+        return PART_DIFF_CALC[DitiPart.MONTHS]
 
     def capture_part(_, datetime: dt) -> int:
         return datetime.year
@@ -255,15 +255,15 @@ class _DiffCalcYear(_DiffCalc):
         diff += additional
         return diff
 
-PART_DIFF_CALC_NONE: DiffCalculator = _DiffCalcNone()
+PART_DIFF_CALC_NONE: DitiDiff = _DiffCalcNone()
 
-PART_DIFF_CALC: Dict[PartEnum, DiffCalculator] = {
-    PartEnum.MICROSECOND: _DiffCalcMicrosecond(),
-    PartEnum.SECOND: _DiffCalcSecond(),
-    PartEnum.MINUTE: _DiffCalcMinute(),
-    PartEnum.HOUR: _DiffCalcHour(),
-    PartEnum.DAY: _DiffCalcDay(),
-    PartEnum.WEEK: _DiffCalcWeek(),
-    PartEnum.MONTH: _DiffCalcMonth(),
-    PartEnum.YEAR: _DiffCalcYear(),
+PART_DIFF_CALC: Dict[DitiPart, DitiDiff] = {
+    DitiPart.MICROSECONDS: _DiffCalcMicrosecond(),
+    DitiPart.SECONDS: _DiffCalcSecond(),
+    DitiPart.MINUTES: _DiffCalcMinute(),
+    DitiPart.HOURS: _DiffCalcHour(),
+    DitiPart.DAYS: _DiffCalcDay(),
+    DitiPart.WEEKS: _DiffCalcWeek(),
+    DitiPart.MONTHS: _DiffCalcMonth(),
+    DitiPart.YEARS: _DiffCalcYear(),
 }
