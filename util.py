@@ -6,12 +6,15 @@ from typing import Union
 import pytz
 from dateutil.relativedelta import relativedelta as rtd
 
+from timezones import DitiTimezone
+
+
 class DitiRound(Enum):
     ROUND_DOWN = 0
     ROUND_UP = 1
 
 
-class DitiPart(Enum):
+class DitiParts(Enum):
     YEARS = 0
     MONTHS = 1
     WEEKS = 2
@@ -23,33 +26,31 @@ class DitiPart(Enum):
 
 
 PART_FORMAT = {
-    DitiPart.YEARS: "%Y",
-    DitiPart.MONTHS: "%m",
-    DitiPart.WEEKS: "%W",
-    DitiPart.DAYS: "%d",
-    DitiPart.HOURS: "%H",
-    DitiPart.MINUTES: "%M",
-    DitiPart.SECONDS: "%S",
-    DitiPart.MICROSECONDS: "%f",
+    DitiParts.YEARS: "%Y",
+    DitiParts.MONTHS: "%m",
+    DitiParts.WEEKS: "%W",
+    DitiParts.DAYS: "%d",
+    DitiParts.HOURS: "%H",
+    DitiParts.MINUTES: "%M",
+    DitiParts.SECONDS: "%S",
+    DitiParts.MICROSECONDS: "%f",
 }
 
 PART_DELTA = {
-    DitiPart.YEARS: lambda x: rtd(years=x),
-    DitiPart.MONTHS: lambda x: rtd(months=x),
-    DitiPart.WEEKS: lambda x: rtd(weeks=x),
-    DitiPart.DAYS: lambda x: td(days=x),
-    DitiPart.HOURS: lambda x: td(hours=x),
-    DitiPart.MINUTES: lambda x: td(minutes=x),
-    DitiPart.SECONDS: lambda x: td(seconds=x),
-    DitiPart.MICROSECONDS: lambda x: td(microseconds=x),
+    DitiParts.YEARS: lambda x: rtd(years=x),
+    DitiParts.MONTHS: lambda x: rtd(months=x),
+    DitiParts.WEEKS: lambda x: rtd(weeks=x),
+    DitiParts.DAYS: lambda x: td(days=x),
+    DitiParts.HOURS: lambda x: td(hours=x),
+    DitiParts.MINUTES: lambda x: td(minutes=x),
+    DitiParts.SECONDS: lambda x: td(seconds=x),
+    DitiParts.MICROSECONDS: lambda x: td(microseconds=x),
 }
 
-def timezone_to_offset_seconds(timezone: pytz.tzinfo.BaseTzInfo) -> float:
-    return timezone.utcoffset(None).total_seconds()
 
-
-def timezone_to_offset_str(timezone: pytz.tzinfo.BaseTzInfo) -> str:
-    offset_mins = int(timezone_to_offset_seconds(timezone) // 60)
+def timezone_to_offset_str(timezone: pytz.tzinfo.BaseTzInfo, datetime: dt) -> str:
+    newdt = dt.fromtimestamp(datetime.timestamp())
+    offset_mins = int(timezone.utcoffset(newdt).total_seconds() // 60)
     offset_str = "{:+03d}:{:02d}".format(offset_mins // 60, offset_mins % 60)
     return offset_str
 
@@ -63,7 +64,9 @@ def offset_str_to_minutes(offset_str) -> int:
     return total_offset_minutes
 
 
-def parse_timezone(timezone: Union[str, int, None]) -> pytz.tzinfo.BaseTzInfo:
+def parse_timezone(
+    timezone: Union[str, int, DitiTimezone, None]
+) -> pytz.tzinfo.BaseTzInfo:
     __tz = None
     if isinstance(timezone, str):
         if timezone.startswith("+") or timezone.startswith("-"):
@@ -74,6 +77,8 @@ def parse_timezone(timezone: Union[str, int, None]) -> pytz.tzinfo.BaseTzInfo:
     elif isinstance(timezone, int):
         offset = timezone
         __tz = pytz.FixedOffset(offset)
+    elif isinstance(timezone, DitiTimezone):
+        __tz = pytz.timezone(timezone.value())
     else:
         __tz = pytz.timezone("UTC")
     return __tz
@@ -98,5 +103,7 @@ def get_daycount_of_month(month: int, year: int):
     if month in [4, 6, 9, 11]:
         day_count = 30
     elif month == 2:
-        day_count = 29 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 28
+        day_count = (
+            29 if (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)) else 28
+        )
     return day_count

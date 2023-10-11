@@ -3,7 +3,7 @@ from typing import List
 
 from calcs import DitiCalcs
 from timezones import DitiTimezone
-from util import DitiPart, DitiRound, parse_date_time
+from util import DitiParts, DitiRound, parse_date_time
 
 
 class DitiOp:
@@ -12,7 +12,7 @@ class DitiOp:
 
 
 class DitiOpUpdate(DitiOp):
-    def __init__(self, part: DitiPart, value: int) -> None:
+    def __init__(self, part: DitiParts, value: int) -> None:
         self.__part = part
         self.__value = value
 
@@ -21,7 +21,7 @@ class DitiOpUpdate(DitiOp):
 
 
 class DitiOpAdd(DitiOp):
-    def __init__(self, part: DitiPart, amount: int) -> None:
+    def __init__(self, part: DitiParts, amount: int) -> None:
         self.__part = part
         self.__amount = amount
 
@@ -30,7 +30,7 @@ class DitiOpAdd(DitiOp):
 
 
 class DitiOpHeadOf(DitiOp):
-    def __init__(self, part: DitiPart) -> None:
+    def __init__(self, part: DitiParts) -> None:
         self.__part = part
 
     def _exec(self, dt: datetime) -> datetime:
@@ -38,7 +38,7 @@ class DitiOpHeadOf(DitiOp):
 
 
 class DitiOpTailOf(DitiOp):
-    def __init__(self, part: DitiPart) -> None:
+    def __init__(self, part: DitiParts) -> None:
         self.__part = part
 
     def _exec(self, dt: datetime) -> datetime:
@@ -48,7 +48,7 @@ class DitiOpTailOf(DitiOp):
 class DitiOpAlignTo(DitiOp):
     def __init__(
         self,
-        part: DitiPart,
+        part: DitiParts,
         reference: int,
         round_mode: DitiRound = DitiRound.ROUND_DOWN,
     ) -> None:

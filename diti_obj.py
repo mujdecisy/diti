@@ -4,10 +4,10 @@ from typing import List, Union
 import pytz
 
 from calcs import DitiCalcs
-from diti_op import DitiOp, diti_ops
+from diti_ops import DitiOp, diti_ops
 from timezones import DitiTimezone
 from util import (
-    DitiPart,
+    DitiParts,
     DitiRound,
     parse_date_time,
     parse_timezone,
@@ -56,14 +56,14 @@ class Diti:
         if isinstance(date_time, MutableDatetime):
             self._mdt = date_time
         else:
-            self._tz = parse_timezone(timezone)
             self._mdt = MutableDatetime(parse_date_time(date_time))
+            self._tz = parse_timezone(timezone)
 
             if self._mdt.tzinfo == None:
-                timezoned_str = self._mdt.to_dt().isoformat() + timezone_to_offset_str(self._tz)
-                self._mdt = MutableDatetime(
-                    dt.fromisoformat(timezoned_str)
+                timezoned_str = self._mdt.to_dt().isoformat() + timezone_to_offset_str(
+                    self._tz, self._mdt.to_dt()
                 )
+                self._mdt = MutableDatetime(dt.fromisoformat(timezoned_str))
 
             if timezone != None:
                 self._mdt = MutableDatetime(self._mdt.to_dt().astimezone(self._tz))
@@ -71,7 +71,7 @@ class Diti:
     def __str__(self) -> str:
         return self._mdt.to_dt().isoformat()
 
-    def get(self, part: DitiPart) -> int:
+    def get(self, part: DitiParts) -> int:
         return DitiCalcs.get(self._mdt.to_dt(), part)
 
     def clone(self) -> "Diti":
@@ -99,23 +99,23 @@ class DitiEdit(Diti):
         super().__init__(date_time, timezone)
         self.__tempdt = self._mdt.to_dt()
 
-    def head_of(self, part: DitiPart) -> "DitiEdit":
+    def head_of(self, part: DitiParts) -> "DitiEdit":
         self.__tempdt = DitiCalcs.head_of(self.__tempdt, part)
         return self
 
-    def tail_of(self, part: DitiPart) -> "DitiEdit":
+    def tail_of(self, part: DitiParts) -> "DitiEdit":
         self.__tempdt = DitiCalcs.tail_of(self.__tempdt, part)
         return self
 
-    def update(self, part: DitiPart, value: int) -> "DitiEdit":
+    def update(self, part: DitiParts, value: int) -> "DitiEdit":
         self.__tempdt = DitiCalcs.update(self.__tempdt, part, value)
         return self
 
-    def add(self, part: DitiPart, amount: int) -> "DitiEdit":
+    def add(self, part: DitiParts, amount: int) -> "DitiEdit":
         self.__tempdt = DitiCalcs.add(self.__tempdt, part, amount)
         return self
 
-    def align_to(self, part: DitiPart, reference: int, rounding_mode: DitiRound):
+    def align_to(self, part: DitiParts, reference: int, rounding_mode: DitiRound):
         self.__tempdt = DitiCalcs.align_to(
             self.__tempdt, part, reference, rounding_mode
         )
