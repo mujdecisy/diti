@@ -1,8 +1,8 @@
 from datetime import datetime, tzinfo
 from typing import List, Tuple
-from calcs import DitiCalcs
 
-from util import DitiParts
+from diti.calcs import DitiCalcs
+from diti.util import DitiParts
 
 MAX_TIMESTAMP = 99999999999.999999
 

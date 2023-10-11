@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List
 
-from calcs import DitiCalcs
-from timezones import DitiTimezone
-from util import DitiParts, DitiRound, parse_date_time
+from diti.calcs import DitiCalcs
+from diti.timezones import DitiTimezone
+from diti.util import DitiParts, DitiRound, parse_date_time
 
 
 class DitiOp:

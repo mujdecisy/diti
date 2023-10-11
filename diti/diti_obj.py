@@ -3,10 +3,10 @@ from typing import List, Union
 
 import pytz
 
-from calcs import DitiCalcs
-from diti_ops import DitiOp, diti_ops
-from timezones import DitiTimezone
-from util import (
+from diti.calcs import DitiCalcs
+from diti.diti_ops import DitiOp, diti_ops
+from diti.timezones import DitiTimezone
+from diti.util import (
     DitiParts,
     DitiRound,
     parse_date_time,

@@ -1,7 +1,7 @@
 from datetime import datetime as dt
 from typing import Dict
 
-from util import DitiParts, get_daycount_of_month
+from diti.util import DitiParts, get_daycount_of_month
 
 class DitiPart:
     def diff_to_head(self, val: dt) -> int:

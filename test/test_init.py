@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import pytz
 
-from diti_obj import Diti
+from diti.diti_obj import Diti
 from datetime import datetime as dt
 
 

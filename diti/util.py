@@ -6,7 +6,7 @@ from typing import Union
 import pytz
 from dateutil.relativedelta import relativedelta as rtd
 
-from timezones import DitiTimezone
+from diti.timezones import DitiTimezone
 
 
 class DitiRound(Enum):

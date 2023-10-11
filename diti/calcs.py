@@ -3,9 +3,9 @@ from typing import Union
 
 import pytz
 
-from part_obj import PART
-from timezones import DitiTimezone
-from util import (PART_DELTA, PART_FORMAT, DitiParts, DitiRound,
+from diti.part_obj import PART
+from diti.timezones import DitiTimezone
+from diti.util import (PART_DELTA, PART_FORMAT, DitiParts, DitiRound,
                   get_daycount_of_month)
 
 
