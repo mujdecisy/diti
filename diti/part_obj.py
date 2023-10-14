@@ -30,9 +30,6 @@ class _DitiPart(DitiPart):
         diff = self.get_lower_part().diff_to_head(val)
         lower = self.get_lower_part()
         addition = lower.capture_part(val) - lower.get_min()
-        print(
-            self.__class__.__name__, diff, addition, lower.get_microsecond_multiplier()
-        )
         diff += addition * lower.get_microsecond_multiplier()
         return diff
 

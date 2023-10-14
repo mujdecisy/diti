@@ -4,7 +4,7 @@ from typing import List, Union
 import pytz
 
 from diti.calcs import DitiCalcs
-from diti.diti_ops import DitiOp, diti_ops
+from diti.diti_ops import DitiOp, diti_op
 from diti.timezones import DitiTimezone
 from diti.util import (
     DitiParts,
@@ -81,7 +81,7 @@ class Diti:
         return DitiEdit(self._mdt, self._tz)
 
     def edit_ops(self, ops: List[DitiOp]) -> None:
-        new_dt = diti_ops(self._mdt.to_dt(), ops)
+        new_dt = diti_op(self._mdt.to_dt(), ops)
         self._mdt.update(new_dt)
 
     def to_dt(self) -> dt:

@@ -74,8 +74,16 @@ class DitiOpTimezoneUpdate(DitiOp):
     def _exec(self, dt: datetime) -> datetime:
         return DitiCalcs.timezone_update(dt, self.__timeozone)
 
+class DitiOps:
+    UPDATE = DitiOpUpdate
+    ADD = DitiOpAdd
+    HEAD_OF = DitiOpHeadOf
+    TAIL_OF = DitiOpTailOf
+    ALIGN_TO = DitiOpAlignTo
+    TZ_CHANGE = DitiOpTimezoneChange
+    TZ_UPDATE = DitiOpTimezoneUpdate
 
-def diti_ops(dt: None | datetime | str | int | float, ops: List[DitiOp]) -> datetime:
+def diti_op(dt: None | datetime | str | int | float, ops: List[DitiOp]) -> datetime:
     dt = parse_date_time(dt)
     for op in ops:
         dt = op._exec(dt)
