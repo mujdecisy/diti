@@ -6,8 +6,6 @@ from typing import Union
 import pytz
 from dateutil.relativedelta import relativedelta as rtd
 
-from diti.timezones import DitiTimezone
-
 
 class DitiRound(Enum):
     ROUND_DOWN = 0
@@ -65,7 +63,7 @@ def offset_str_to_minutes(offset_str) -> int:
 
 
 def parse_timezone(
-    timezone: Union[str, int, DitiTimezone, None]
+    timezone: Union[str, int, None]
 ) -> pytz.tzinfo.BaseTzInfo:
     __tz = None
     if isinstance(timezone, str):
@@ -77,8 +75,6 @@ def parse_timezone(
     elif isinstance(timezone, int):
         offset = timezone
         __tz = pytz.FixedOffset(offset)
-    elif isinstance(timezone, DitiTimezone):
-        __tz = pytz.timezone(timezone.value())
     else:
         __tz = pytz.timezone("UTC")
     return __tz

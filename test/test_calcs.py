@@ -183,13 +183,13 @@ class TestCalcs(TestCase):
 
     def test__timezone_change__negative_to_positive(self):
         dt = datetime.fromisoformat("2023-03-03T03:00:00-08:00")
-        dt = DitiCalcs.timezone_change(dt, DitiTimezone.Europe__Istanbul)
+        dt = DitiCalcs.timezone_change(dt, DitiTimezone.EUROPE__ISTANBUL)
         expected = "2023-03-03T14:00:00+03:00"
         self.assertEqual(dt.isoformat(), expected)
 
     def test__timezone_change__postitive_to_negative(self):
         dt = datetime.fromisoformat("2023-03-03T14:00:00+03:00")
-        dt = DitiCalcs.timezone_change(dt, DitiTimezone.America__Los_Angeles)
+        dt = DitiCalcs.timezone_change(dt, DitiTimezone.AMERICA__LOS_ANGELES)
         expected = "2023-03-03T03:00:00-08:00"
         self.assertEqual(dt.isoformat(), expected)
 

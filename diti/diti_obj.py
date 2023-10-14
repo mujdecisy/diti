@@ -5,7 +5,6 @@ import pytz
 
 from diti.calcs import DitiCalcs
 from diti.diti_ops import DitiOp, diti_op
-from diti.timezones import DitiTimezone
 from diti.util import (
     DitiParts,
     DitiRound,
@@ -121,10 +120,10 @@ class DitiEdit(Diti):
         )
         return self
 
-    def timezone_change(self, timezone: DitiTimezone):
+    def timezone_change(self, timezone: str):
         self.__tempdt = DitiCalcs.timezone_change(self.__tempdt, timezone)
 
-    def timezone_update(self, timezone: DitiTimezone):
+    def timezone_update(self, timezone: str):
         self.__tempdt = DitiCalcs.timezone_update(self.__tempdt, timezone)
 
     def commit(self):

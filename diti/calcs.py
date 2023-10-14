@@ -4,9 +4,13 @@ from typing import Union
 import pytz
 
 from diti.part_obj import PART
-from diti.timezones import DitiTimezone
-from diti.util import (PART_DELTA, PART_FORMAT, DitiParts, DitiRound,
-                  get_daycount_of_month)
+from diti.util import (
+    PART_DELTA,
+    PART_FORMAT,
+    DitiParts,
+    DitiRound,
+    get_daycount_of_month,
+)
 
 
 class DitiCalcs:
@@ -56,18 +60,20 @@ class DitiCalcs:
         return DitiCalcs.add(dt, part, diff)
 
     @staticmethod
-    def timezone_change(dt: datetime, timezone: Union[DitiTimezone, tzinfo]) -> datetime:
+    def timezone_change(
+        dt: datetime, timezone: Union[str, tzinfo]
+    ) -> datetime:
         ts = dt.timestamp()
         tz = (
-            pytz.timezone(timezone.value)
-            if isinstance(timezone, DitiTimezone)
+            pytz.timezone(timezone)
+            if isinstance(timezone, str)
             else timezone
         )
         return dt.fromtimestamp(ts).astimezone(tz)
 
     @staticmethod
     def timezone_update(
-        dt: datetime, timezone: Union[DitiTimezone, tzinfo]
+        dt: datetime, timezone: Union[str, tzinfo]
     ) -> datetime:
         offset_src = dt.utcoffset()
         if offset_src != None:
@@ -76,8 +82,8 @@ class DitiCalcs:
             offset_src = 0
 
         tz = (
-            pytz.timezone(timezone.value)
-            if isinstance(timezone, DitiTimezone)
+            pytz.timezone(timezone)
+            if isinstance(timezone, str)
             else timezone
         )
 
@@ -114,7 +120,5 @@ class DitiCalcs:
         else:
             from_ts = from_dt_head.timestamp()
             to_ts = to_dt_head.timestamp()
-            seconds_multiplier = (
-                PART[part].get_microsecond_multiplier() / 1_000_000
-            )
+            seconds_multiplier = PART[part].get_microsecond_multiplier() / 1_000_000
             return (to_ts - from_ts) // seconds_multiplier

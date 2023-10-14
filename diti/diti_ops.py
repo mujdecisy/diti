@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List
 
 from diti.calcs import DitiCalcs
-from diti.timezones import DitiTimezone
 from diti.util import DitiParts, DitiRound, parse_date_time
 
 
@@ -60,7 +59,7 @@ class DitiOpAlignTo(DitiOp):
         return DitiCalcs.align_to(dt, self.__part, self.__reference, self.__round_mode)
 
 class DitiOpTimezoneChange(DitiOp):
-    def __init__(self, timezone: DitiTimezone) -> None:
+    def __init__(self, timezone: str) -> None:
         self.__timeozone = timezone
 
     def _exec(self, dt: datetime) -> datetime:
@@ -68,7 +67,7 @@ class DitiOpTimezoneChange(DitiOp):
 
 
 class DitiOpTimezoneUpdate(DitiOp):
-    def __init__(self, timezone: DitiTimezone) -> None:
+    def __init__(self, timezone: str) -> None:
         self.__timeozone = timezone
 
     def _exec(self, dt: datetime) -> datetime:
