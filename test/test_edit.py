@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from diti.diti_obj import Diti
-from diti.util import DitiParts
+from diti.constants import DitiParts
 
 
 class TestEdit(TestCase):

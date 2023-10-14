@@ -4,10 +4,9 @@ from typing import List, Union
 import pytz
 
 from diti.calcs import DitiCalcs
+from diti.constants import DitiParts, DitiRound
 from diti.diti_ops import DitiOp, diti_op
 from diti.util import (
-    DitiParts,
-    DitiRound,
     parse_date_time,
     parse_timezone,
     timezone_to_offset_str,

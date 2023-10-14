@@ -1,50 +1,6 @@
 from datetime import datetime as dt
-from datetime import timedelta as td
-from enum import Enum
 from typing import Union
-
 import pytz
-from dateutil.relativedelta import relativedelta as rtd
-
-
-class DitiRound(Enum):
-    ROUND_DOWN = 0
-    ROUND_UP = 1
-
-
-class DitiParts(Enum):
-    YEARS = 0
-    MONTHS = 1
-    WEEKS = 2
-    DAYS = 3
-    HOURS = 4
-    MINUTES = 5
-    SECONDS = 6
-    MICROSECONDS = 7
-
-
-PART_FORMAT = {
-    DitiParts.YEARS: "%Y",
-    DitiParts.MONTHS: "%m",
-    DitiParts.WEEKS: "%W",
-    DitiParts.DAYS: "%d",
-    DitiParts.HOURS: "%H",
-    DitiParts.MINUTES: "%M",
-    DitiParts.SECONDS: "%S",
-    DitiParts.MICROSECONDS: "%f",
-}
-
-PART_DELTA = {
-    DitiParts.YEARS: lambda x: rtd(years=x),
-    DitiParts.MONTHS: lambda x: rtd(months=x),
-    DitiParts.WEEKS: lambda x: rtd(weeks=x),
-    DitiParts.DAYS: lambda x: td(days=x),
-    DitiParts.HOURS: lambda x: td(hours=x),
-    DitiParts.MINUTES: lambda x: td(minutes=x),
-    DitiParts.SECONDS: lambda x: td(seconds=x),
-    DitiParts.MICROSECONDS: lambda x: td(microseconds=x),
-}
-
 
 def timezone_to_offset_str(timezone: pytz.tzinfo.BaseTzInfo, datetime: dt) -> str:
     newdt = dt.fromtimestamp(datetime.timestamp())

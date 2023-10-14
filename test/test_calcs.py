@@ -1,11 +1,9 @@
 from datetime import datetime
 from unittest import TestCase
 
-import pytz
-
 from diti.calcs import DitiCalcs
 from diti.timezones import DitiTimezone
-from diti.util import DitiParts, DitiRound
+from diti.constants import DitiParts, DitiRound
 
 
 class TestCalcs(TestCase):

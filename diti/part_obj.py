@@ -1,7 +1,11 @@
 from datetime import datetime as dt
-from typing import Dict
+from typing import Dict, Union
+from dateutil.relativedelta import relativedelta
+from datetime import timedelta
 
-from diti.util import DitiParts, get_daycount_of_month
+from diti.util import get_daycount_of_month
+from diti.constants import DitiParts
+
 
 class DitiPart:
     def diff_to_head(self, val: dt) -> int:
@@ -24,6 +28,13 @@ class DitiPart:
 
     def capture_part(_, datetime: dt) -> int:
         raise NotImplementedError()
+
+    def get_delta(_) -> Union[relativedelta, timedelta]:
+        raise NotImplementedError
+
+    def get_format(_) -> str:
+        raise NotImplementedError
+
 
 class _DitiPart(DitiPart):
     def diff_to_head(self, val: dt) -> int:
@@ -55,6 +66,12 @@ class _DitiPart(DitiPart):
     def capture_part(_, datetime: dt) -> int:
         raise NotImplementedError()
 
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        raise NotImplementedError
+
+    def get_format(_) -> str:
+        raise NotImplementedError
+
 
 class _DitiPartNone(_DitiPart):
     def get_min(_) -> int:
@@ -78,6 +95,12 @@ class _DitiPartNone(_DitiPart):
     def capture_part(_, datetime: dt) -> int:
         return 0
 
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        raise None
+
+    def get_format(_) -> str:
+        return None
+
 
 class _DitiPartMicrosecond(_DitiPart):
     def get_min(_) -> int:
@@ -94,6 +117,12 @@ class _DitiPartMicrosecond(_DitiPart):
 
     def capture_part(_, datetime: dt) -> int:
         return datetime.microsecond
+
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return timedelta(microseconds=amount)
+
+    def get_format(_) -> str:
+        return "%f"
 
 
 class _DitiPartSecond(_DitiPart):
@@ -112,6 +141,12 @@ class _DitiPartSecond(_DitiPart):
     def capture_part(_, datetime: dt) -> int:
         return datetime.second
 
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return timedelta(seconds=amount)
+
+    def get_format(_) -> str:
+        return "%S"
+
 
 class _DitiPartMinute(_DitiPart):
     def get_min(_) -> int:
@@ -128,6 +163,12 @@ class _DitiPartMinute(_DitiPart):
 
     def capture_part(_, datetime: dt) -> int:
         return datetime.minute
+
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return timedelta(minutes=amount)
+
+    def get_format(_) -> str:
+        return "%M"
 
 
 class _DitiPartHour(_DitiPart):
@@ -146,6 +187,12 @@ class _DitiPartHour(_DitiPart):
     def capture_part(_, datetime: dt) -> int:
         return datetime.hour
 
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return timedelta(hours=amount)
+
+    def get_format(_) -> str:
+        return "%H"
+
 
 class _DitiPartDay(_DitiPart):
     def get_min(_) -> int:
@@ -162,6 +209,12 @@ class _DitiPartDay(_DitiPart):
 
     def capture_part(_, datetime: dt) -> int:
         return datetime.day
+
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return timedelta(days=amount)
+
+    def get_format(_) -> str:
+        return "%d"
 
 
 class _DitiPartWeek(_DitiPart):
@@ -194,6 +247,12 @@ class _DitiPartWeek(_DitiPart):
         diff += additional
         return diff
 
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return relativedelta(weeks=amount)
+
+    def get_format(_) -> str:
+        return "%W"
+
 
 class _DitiPartMonth(_DitiPart):
     def get_min(_) -> int:
@@ -215,6 +274,12 @@ class _DitiPartMonth(_DitiPart):
         additional = (day_count - val.day) * lower.get_microsecond_multiplier()
         diff += additional
         return diff
+
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return relativedelta(months = amount)
+
+    def get_format(_) -> str:
+        return "%m"
 
 
 class _DitiPartYear(_DitiPart):
@@ -251,6 +316,13 @@ class _DitiPartYear(_DitiPart):
         additional = day_count * lower.get_lower_part().get_microsecond_multiplier()
         diff += additional
         return diff
+
+    def get_delta(_, amount: int) -> Union[relativedelta, timedelta]:
+        return relativedelta(years=amount)
+
+    def get_format(_) -> str:
+        return "%Y"
+
 
 PART_NONE: DitiPart = _DitiPartNone()
 

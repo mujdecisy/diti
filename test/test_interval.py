@@ -1,10 +1,9 @@
 from datetime import datetime, timezone as dt_tz
 from unittest import TestCase
-from bson import utc
 
 from diti.diti_interval import DitiInterval
 from diti.diti_obj import Diti
-from diti.util import DitiParts
+from diti.constants import DitiParts
 
 
 class TestInterval(TestCase):

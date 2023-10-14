@@ -2,7 +2,8 @@ from datetime import datetime
 from typing import List
 
 from diti.calcs import DitiCalcs
-from diti.util import DitiParts, DitiRound, parse_date_time
+from diti.constants import DitiParts, DitiRound
+from diti.util import parse_date_time
 
 
 class DitiOp:

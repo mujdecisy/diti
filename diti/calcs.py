@@ -2,15 +2,10 @@ from datetime import datetime, tzinfo
 from typing import Union
 
 import pytz
+from diti.constants import DitiParts, DitiRound
 
 from diti.part_obj import PART
-from diti.util import (
-    PART_DELTA,
-    PART_FORMAT,
-    DitiParts,
-    DitiRound,
-    get_daycount_of_month,
-)
+from diti.util import get_daycount_of_month
 
 
 class DitiCalcs:
@@ -30,7 +25,7 @@ class DitiCalcs:
 
     @staticmethod
     def add(dt: datetime, part: DitiParts, amount: int) -> datetime:
-        return dt + PART_DELTA[part](amount)
+        return dt + PART[part].get_delta(amount)
 
     @staticmethod
     def head_of(dt: datetime, part: DitiParts) -> datetime:
@@ -99,7 +94,7 @@ class DitiCalcs:
     # --------------------------------------------------------------------------
     @staticmethod
     def get(dt: datetime, part: DitiParts) -> int:
-        fmt = PART_FORMAT[part]
+        fmt = PART[part].get_format()
         part_str = dt.strftime(fmt)
         return int(part_str)
 
