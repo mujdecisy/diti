@@ -121,9 +121,11 @@ class DitiEdit(Diti):
 
     def timezone_change(self, timezone: str):
         self.__tempdt = DitiCalcs.timezone_change(self.__tempdt, timezone)
+        return self
 
     def timezone_update(self, timezone: str):
         self.__tempdt = DitiCalcs.timezone_update(self.__tempdt, timezone)
+        return self
 
     def commit(self):
         self._mdt.update(self.__tempdt)
